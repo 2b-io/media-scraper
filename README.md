@@ -1,2 +1,2 @@
-# serverless-scraper
-Web Scraping Service that is deployed in serverless way
+# media-network/media-scraper
+Scrape (Pull) media in serverless way.
