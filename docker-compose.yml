@@ -1,0 +1,11 @@
+version: '3'
+services:
+  media-scraper:
+    build: .
+    container_name: media.scraper
+    command: bash -c "tail -f /dev/null"
+    volumes:
+      - .:/usr/src
+      - /usr/src/node_modules
+    ports:
+      - "3000:3000"

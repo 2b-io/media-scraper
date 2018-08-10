@@ -1,0 +1,10 @@
+{
+  "presets": [
+    [ "env", {
+      "target": {
+        "node": "8.10"
+      }
+    } ],
+    "stage-2"
+  ],
+}
