@@ -1,13 +1,21 @@
-const got = require('got')
+import got from 'got'
 
-module.exports.hello = (event, context, callback) => {
+export const scrape = async (event) => {
   console.log(event)
 
-  callback(null, {
+  const { queryStringParameters } = event
+
+  console.log(queryStringParameters)
+
+  const response = await got('http://httpbin.org/get', {
+    json: true
+  })
+
+  return {
     statusCode: 200,
     headers: {
       'Content-Type': 'text/html'
     },
-    body: '<h1>Hello World</h1>'
-  })
+    body: `<h1>Hello World from ${ response.body.origin }</h1>`
+  }
 }

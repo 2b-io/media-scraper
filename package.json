@@ -19,6 +19,7 @@
   "homepage": "https://github.com/media-network/media-scraper#readme",
   "devDependencies": {
     "babel-loader": "7.1.5",
+    "babel-plugin-transform-runtime": "6.23.0",
     "babel-preset-env": "1.7.0",
     "babel-preset-stage-2": "6.24.1",
     "babel-register": "6.26.0",
@@ -32,6 +33,6 @@
     "got": "9.0.0"
   },
   "scripts": {
-    "start": "serverless invoke local --function hello"
+    "start": "serverless offline start"
   }
 }

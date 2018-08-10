@@ -1,12 +1,13 @@
 const slsw = require('serverless-webpack')
-const nodeExternals = require('webpack-node-externals')
 
 module.exports = {
   entry: slsw.lib.entries,
   target: 'node',
   devtool: 'source-map',
   mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
-  externals: [ nodeExternals() ],
+  externals: [
+    /aws-sdk/
+  ],
   module: {
     rules: [
       {
@@ -18,9 +19,14 @@ module.exports = {
             options: {
               presets: [
                 [ 'env', {
-                  target: '8.10'
+                  target: {
+                    node: '8.10'
+                  }
                 } ],
                 'stage-2'
+              ],
+              plugins: [
+                'transform-runtime'
               ]
             }
           }

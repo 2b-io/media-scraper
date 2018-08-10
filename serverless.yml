@@ -5,21 +5,23 @@ provider:
   runtime: nodejs8.10
 
 functions:
-  hello:
-    handler: handler.hello
+  scrape:
+    handler: handler.scrape
     events:
       - http:
           path: /
           method: get
 
 plugins:
-  # - serverless-webpack
+  - serverless-webpack
   - serverless-offline
 
 custom:
+
   serverless-offline:
     port: 3000
     host: "0.0.0.0"
 
   webpack:
     webpackConfig: ./webpack.config.js
+    # includeModules: true
