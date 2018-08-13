@@ -11,6 +11,11 @@ module.exports = {
   module: {
     rules: [
       {
+        type: 'javascript/auto',
+        test: /\.mjs$/,
+        use: []
+      },
+      {
         test: /\.js$/,
         exclude: /node_modules/,
         use: [
@@ -32,6 +37,12 @@ module.exports = {
           }
         ]
       }
+    ]
+  },
+  resolve: {
+    modules: [
+      'src',
+      'node_modules'
     ]
   }
 }

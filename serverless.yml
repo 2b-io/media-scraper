@@ -5,12 +5,12 @@ provider:
   runtime: nodejs8.10
 
 functions:
-  scrape:
-    handler: handler.scrape
+  pull:
+    handler: src/handler.pull
     events:
       - http:
-          path: /
-          method: get
+          path: /pull
+          method: post
 
 plugins:
   - serverless-webpack
@@ -23,5 +23,5 @@ custom:
     host: "0.0.0.0"
 
   webpack:
-    webpackConfig: ./webpack.config.js
+    webpackConfig: internals/webpack.config.js
     # includeModules: true

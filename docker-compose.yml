@@ -9,3 +9,11 @@ services:
       - /usr/src/node_modules
     ports:
       - "3000:3000"
+    networks:
+      infra_cdn:
+        aliases:
+          - media-scraper
+
+networks:
+  infra_cdn:
+    external: true
