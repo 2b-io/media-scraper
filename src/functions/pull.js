@@ -39,29 +39,27 @@ export default safeHandler(
       throw media.statusText
     }
 
-    console.log(media.ok)
-
     const responseHeaders = media.headers.raw()
 
     const contentType = responseHeaders['content-type'] && responseHeaders['content-type'][0]
 
-    const res = {}
+    const file = {}
 
-    res.contentType = contentType ?
+    file.contentType = contentType ?
       contentType.split(';').shift() :
       mime.getType(u.pathname)
 
-    if (res.contentType) {
-      res.ext = mime.getExtension(contentType)
+    if (file.contentType) {
+      file.ext = mime.getExtension(contentType)
     }
 
     const buffer = await media.buffer()
 
-    const upload = await s3.putObject({
+    const upload = await s3.upload({
       Bucket: config.aws.s3.bucket,
       Key: key,
       Body: buffer,
-      ContentType: res.contentType || 'application/octet-stream',
+      ContentType: file.contentType || 'application/octet-stream',
       CacheControl: `max-age=${ ms('7d') / 1000 }`,
       Metadata: {
         'origin-url': u.toString()
@@ -69,7 +67,10 @@ export default safeHandler(
     }).promise()
 
     return {
-      body: JSON.stringify(res)
+      body: JSON.stringify({
+        ...file,
+        meta: upload
+      })
     }
   }
 )

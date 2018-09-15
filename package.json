@@ -1,6 +1,6 @@
 {
   "name": "@media-network/media-scraper",
-  "version": "v0.0.4-prod",
+  "version": "v0.0.5-prod",
   "description": "Scape (pull) media in serverless way.",
   "main": "handler.js",
   "repository": {

@@ -1,8 +1,8 @@
 import serrializeError from 'serialize-error'
 
-export default (handler) => async (...args) => {
+export default (handler) => async (event) => {
   try {
-    await handler(...args)
+    return await handler(event)
   } catch (error) {
     return {
       statusCode: 500,
