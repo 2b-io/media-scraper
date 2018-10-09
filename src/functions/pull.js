@@ -13,7 +13,7 @@ export default safeHandler(
   async (event) => {
     const body = JSON.parse(event.body)
 
-    const { url, key } = body
+    const { url, key, ttl } = body
 
     const headers = body.headers
       .filter(Boolean)
@@ -60,7 +60,7 @@ export default safeHandler(
       Key: key,
       Body: buffer,
       ContentType: file.contentType || 'application/octet-stream',
-      CacheControl: `max-age=${ ms('7d') / 1000 }`,
+      Expires: ttl ? new Date(Date.now() + ms(ttl)) : undefined,
       Metadata: {
         'origin-url': u.toString()
       }
