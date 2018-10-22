@@ -1,6 +1,5 @@
 import fetch from 'node-fetch'
 import mime from 'mime'
-import ms from 'ms'
 import normalizeUrl from 'normalize-url'
 import { URL } from 'url'
 
@@ -60,7 +59,7 @@ export default safeHandler(
       Key: key,
       Body: buffer,
       ContentType: file.contentType || 'application/octet-stream',
-      Expires: ttl ? new Date(Date.now() + ms(ttl)) : undefined,
+      Expires: ttl ? new Date(Date.now() + ttl * 1000) : undefined,
       Metadata: {
         'origin-url': u.toString()
       }
