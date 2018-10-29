@@ -1,0 +1,42 @@
+{
+  "name": "@media-network/media-scraper",
+  "version": "1.0.0",
+  "description": "Scape (pull) media in serverless way.",
+  "main": "handler.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/media-network/media-scraper.git"
+  },
+  "keywords": [
+    "serverless",
+    "aws"
+  ],
+  "author": "LongLH <d@dapps.me>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/media-network/media-scraper/issues"
+  },
+  "homepage": "https://github.com/media-network/media-scraper#readme",
+  "devDependencies": {
+    "babel-loader": "7.1.5",
+    "babel-plugin-transform-runtime": "6.23.0",
+    "babel-preset-env": "1.7.0",
+    "babel-preset-stage-2": "6.24.1",
+    "babel-register": "6.26.0",
+    "run.env": "1.0.2",
+    "serverless": "1.30.0",
+    "serverless-offline": "3.25.7",
+    "serverless-webpack": "5.2.0",
+    "webpack": "4.16.5",
+    "webpack-node-externals": "1.7.2"
+  },
+  "dependencies": {
+    "mime": "2.3.1",
+    "node-fetch": "2.2.0",
+    "normalize-url": "3.2.0",
+    "serialize-error": "2.1.0"
+  },
+  "scripts": {
+    "start": "run.env serverless offline start"
+  }
+}
