@@ -3,6 +3,7 @@ service: media-scraper
 provider:
   name: aws
   runtime: nodejs8.10
+  memorySize: 256
 
 functions:
   pull:
