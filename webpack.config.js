@@ -1,4 +1,5 @@
 const slsw = require('serverless-webpack')
+const nodeExternals = require('webpack-node-externals')
 
 module.exports = {
   entry: slsw.lib.entries,
@@ -6,32 +7,28 @@ module.exports = {
   devtool: 'source-map',
   mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
   externals: [
-    /aws-sdk/
-  ],
+    /aws-sdk/,
+    slsw.lib.webpack.isLocal ? nodeExternals() : null
+  ].filter(Boolean),
   module: {
     rules: [
       {
-        type: 'javascript/auto',
-        test: /\.mjs$/,
-        use: []
-      },
-      {
-        test: /\.js$/,
+        test: /\.m?js$/,
         exclude: /node_modules/,
         use: [
           {
             loader: 'babel-loader',
             options: {
               presets: [
-                [ 'env', {
-                  target: {
+                [ '@babel/preset-env', {
+                  targets: {
                     node: '8.10'
                   }
-                } ],
-                'stage-2'
+                } ]
               ],
               plugins: [
-                'transform-runtime'
+                '@babel/plugin-proposal-object-rest-spread',
+                '@babel/plugin-transform-runtime'
               ]
             }
           }
@@ -41,8 +38,8 @@ module.exports = {
   },
   resolve: {
     modules: [
-      'src',
-      'node_modules'
+      'node_modules',
+      'src'
     ]
   }
 }
