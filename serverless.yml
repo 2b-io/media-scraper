@@ -3,6 +3,11 @@ service: media-scraper
 provider:
   name: aws
   runtime: nodejs8.10
+  environment:
+    AWS_S3_BUCKET: ${env:AWS_S3_BUCKET}
+    AWS_S3_REGION: ${env:AWS_S3_REGION}
+    AWS_S3_ACCESS_KEY_ID: ${env:AWS_S3_ACCESS_KEY_ID}
+    AWS_S3_SECRET_ACCESS_KEY: ${env:AWS_S3_SECRET_ACCESS_KEY}
   memorySize: 256
 
 functions:
@@ -13,11 +18,6 @@ functions:
       - http:
           path: /pull
           method: post
-    environment:
-      AWS_S3_BUCKET: ${env:AWS_S3_BUCKET}
-      AWS_S3_REGION: ${env:AWS_S3_REGION}
-      AWS_S3_ACCESS_KEY_ID: ${env:AWS_S3_ACCESS_KEY_ID}
-      AWS_S3_SECRET_ACCESS_KEY: ${env:AWS_S3_SECRET_ACCESS_KEY}
 
 plugins:
   - serverless-webpack
@@ -29,4 +29,4 @@ custom:
     host: "0.0.0.0"
 
   webpack:
-    webpackConfig: internals/webpack.config.js
+    webpackConfig: webpack.config.js

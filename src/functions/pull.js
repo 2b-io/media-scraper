@@ -1,6 +1,7 @@
 import fetch from 'node-fetch'
 import mime from 'mime'
 import normalizeUrl from 'normalize-url'
+import fileType from 'file-type'
 import { URL } from 'url'
 
 import config from 'infrastructure/config'
@@ -38,9 +39,37 @@ export default safeHandler(
       throw media.statusText
     }
 
-    const responseHeaders = media.headers.raw()
+    // clone response to consume its stream
+    const clone = await media.clone()
 
-    const contentType = responseHeaders['content-type'] && responseHeaders['content-type'][0]
+    const {
+      ext,
+      mime: contentType
+    } = await new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => reject(), 2e3)
+      let shouldHalt = false
+
+      clone.body.on('readable', () => {
+        if (shouldHalt) {
+          clearTimeout(timeout)
+
+          return
+        }
+
+        const chunk = clone.body.read(fileType.minimumBytes)
+
+        if (chunk) {
+          const type = fileType(chunk)
+
+          shouldHalt = true
+          clone.body.destroy()
+
+          clearTimeout(timeout)
+
+          resolve(type)
+        }
+      })
+    })
 
     const file = {}
 
@@ -48,16 +77,12 @@ export default safeHandler(
       contentType.split(';').shift() :
       mime.getType(u.pathname)
 
-    if (file.contentType) {
-      file.ext = mime.getExtension(contentType)
-    }
-
-    const buffer = await media.buffer()
+    file.ext = ext || mime.getExtension(file.contentType)
 
     const upload = await s3.upload({
       Bucket: config.aws.s3.bucket,
       Key: key,
-      Body: buffer,
+      Body: media.body,
       ContentType: file.contentType || 'application/octet-stream',
       Expires: ttl ? new Date(Date.now() + ttl * 1000) : undefined,
       Metadata: {
@@ -66,6 +91,7 @@ export default safeHandler(
     }).promise()
 
     return {
+      statusCode: 201,
       body: JSON.stringify({
         ...file,
         meta: upload
