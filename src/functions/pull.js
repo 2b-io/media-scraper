@@ -47,16 +47,27 @@ export default safeHandler(
       mime: contentType
     } = await new Promise((resolve, reject) => {
       const timeout = setTimeout(() => reject(), 2e3)
+      let shouldHalt = false
 
-      clone.body.once('readable', () => {
+      clone.body.on('readable', () => {
+        if (shouldHalt) {
+          clearTimeout(timeout)
+
+          return
+        }
+
         const chunk = clone.body.read(fileType.minimumBytes)
-        const type = fileType(chunk)
 
-        // clear things
-        clone.body.destroy()
-        clearTimeout(timeout)
+        if (chunk) {
+          const type = fileType(chunk)
 
-        resolve(type)
+          shouldHalt = true
+          clone.body.destroy()
+
+          clearTimeout(timeout)
+
+          resolve(type)
+        }
       })
     })
 

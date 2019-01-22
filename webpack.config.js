@@ -13,7 +13,13 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.m?js$/,
+        test: /\.mjs$/,
+        type: 'javascript/auto',
+        include: /node_modules/,
+        use: []
+      },
+      {
+        test: /\js$/,
         exclude: /node_modules/,
         use: [
           {
