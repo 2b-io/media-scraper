@@ -9,6 +9,8 @@ import s3 from 'infrastructure/s3'
 
 import safeHandler from 'utils/safe-handler'
 
+const TIME_SPENT_TO_DETECT_MIME = 500
+
 export default safeHandler(
   async (event) => {
     const body = JSON.parse(event.body)
@@ -42,11 +44,11 @@ export default safeHandler(
     // clone response to consume its stream
     const clone = await media.clone()
 
-    const {
-      ext,
-      mime: contentType
-    } = await new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => reject(), 2e3)
+    const type = await new Promise((resolve, reject) => {
+      const timeout = setTimeout(
+        () => reject(),
+        TIME_SPENT_TO_DETECT_MIME
+      )
       let shouldHalt = false
 
       clone.body.on('readable', () => {
@@ -71,19 +73,27 @@ export default safeHandler(
       })
     })
 
+    const responseHeaders = media.headers.raw()
+    const contentTypeHeader = responseHeaders['content-type'] && responseHeaders['content-type'][0]
+
     const file = {}
 
-    file.contentType = contentType ?
-      contentType.split(';').shift() :
-      mime.getType(u.pathname)
+    file.contentType = (type && type.mime) ?
+      type.mime.split(';').shift() : (
+        contentTypeHeader ?
+          contentTypeHeader.split(';').shift() :
+          mime.getType(u.pathname)
+      )
 
-    file.ext = ext || mime.getExtension(file.contentType)
+    file.ext = file.contentType ?
+      mime.getExtension(file.contentType) :
+      'application/octet-stream'
 
     const upload = await s3.upload({
       Bucket: config.aws.s3.bucket,
       Key: key,
       Body: media.body,
-      ContentType: file.contentType || 'application/octet-stream',
+      ContentType: file.contentType,
       Expires: ttl ? new Date(Date.now() + ttl * 1000) : undefined,
       Metadata: {
         'origin-url': u.toString()
